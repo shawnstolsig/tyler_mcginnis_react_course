@@ -1,7 +1,8 @@
 import React from 'react'
 
 import PropTypes from 'prop-types'
-import { FaUserFriends, FaFighterJet, FaTrophy } from 'react-icons/fa'
+import { FaUserFriends, FaFighterJet, FaTrophy, FaTimesCircle } from 'react-icons/fa'
+import Results from './results'
 
 // a functional component for the instructions section
 function Instructions(){
@@ -78,6 +79,7 @@ class PlayerInput extends React.Component{
         // prevent normal browser events
         event.preventDefault()
 
+        // onSubmit is defined where it is passed into PlayerInput as an arrow function.  so this handleSubmit is simply calling that prop function
         this.props.onSubmit(this.state.username)
     }
     // invoked whenever input field changes.  this allows us to use controlled (instead of uncontrolled) input fields
@@ -95,14 +97,129 @@ PlayerInput.proptypes = {
     label: PropTypes.string.isRequired,
 }
 
+// a functional component for showing the avatar and name of player once fetched from github
+function PlayerPreview({userName, onReset, label}){
+
+    return (
+        <div className="column player">
+            <h3 className="player-label">
+
+            </h3>
+            <div className="row bg-light">
+                <div className="player-info">
+                    <img 
+                        className="avatar-small"
+                        src={`https://github.com/${userName}.png?size=200`}
+                        alt={`Avagter for ${userName}`}
+                    />
+                    <a 
+                        className="link"
+                        href={`https://github.com/${userName}`}
+                        >{userName}
+                    </a>
+                </div>
+                <button 
+                    className="btn-clear flex-center" 
+                    onClick={onReset}
+                    >
+                    <FaTimesCircle color="rgb(194,57,42)" size={26} />
+                </button>
+            </div>
+        </div>
+    )
+
+}
+
+// proptypes for PlayerPreview
+PlayerPreview.propTypes = {
+    userName: PropTypes.string.isRequired,
+    onReset: PropTypes.func.isRequired,
+    label: PropTypes.string.isRequired
+
+}
+
+
 
 // our Battle component
 export default class Battle extends React.Component {
+    constructor(props){
+        super(props)
+
+        this.state = {
+            playerOne: null,
+            playerTwo: null,
+            battle: false,
+        }
+
+        this.handleSubmit = this.handleSubmit.bind(this)
+        this.handleReset = this.handleReset.bind(this)
+    }
+
+    // when input field "form" is submitted, store player names in state
+    handleSubmit(id, player){
+        this.setState({
+            [id]: player
+        })
+    }
+
+    // this will set player one or two to null whenever invoked.  will be invoked by the PlayerPreview X button
+    handleReset(id){
+        this.setState({
+            [id]: null
+        })
+    }
+
     render() {
+        const { playerOne, playerTwo, battle } = this.state
+
+        // this has a separate return, so all the other UI elements with player input/preview are skipped
+        if(battle){
+            return <Results playerOne={playerOne} playerTwo={playerTwo}/>
+        }
+
+        // instructions, player input/preview, and battle button UI description
         return (
             <React.Fragment>
                 <Instructions />
-                <PlayerInput label="Label!" onSubmit={(value) => console.log(value) } />
+                <div className='players-container'>
+                    <h1 className="center-text header-lg">
+                        Players
+                    </h1>
+                </div>
+                <div className="row space-around">
+                    {playerOne === null 
+                        ? <PlayerInput 
+                                label="Player One"
+                                onSubmit = {(player) => this.handleSubmit('playerOne', player)}
+                            /> 
+                        : <PlayerPreview 
+                            userName={playerOne} 
+                            label={'Player One'} 
+                            onReset={() => this.handleReset('playerOne')}
+                            />
+                    }
+                    {playerTwo === null  
+                        ? <PlayerInput 
+                            label="Player Two"
+                            onSubmit = {(player) => this.handleSubmit('playerTwo', player)}
+                        /> 
+                        : <PlayerPreview 
+                            userName={playerTwo} 
+                            label={'Player Two'} 
+                            onReset={() => this.handleReset('playerTwo')}
+                        />
+                    }
+                </div>
+                    {playerOne && playerTwo && (
+                        <button 
+                            className="btn dark-btn btn-space"
+                            // using setstate here triggers a re-render, which dumps all the other UI elements with battle=true
+                            onClick={() => this.setState({battle: true})}
+                            >
+                            Battle
+                        </button>
+                    )}
+
             </React.Fragment>
         )
     }
