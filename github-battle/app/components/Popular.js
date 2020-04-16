@@ -1,6 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+
 import { fetchPopularRepos } from '../utils/api.js'  // using named import since no default export from api.js
+import { FaUser, FaStar, FaCodeBranch, FaExclamationTriangle } from 'react-icons/fa'
+
 
 // this is a functional component...it only takes in props, and returns UI element
 // note that the Popular class is still the export default for this file, so having this second class here still works from a webpack perspective
@@ -43,6 +46,59 @@ LanguagesNav.propTypes = {
     onUpdateLanguage: PropTypes.func.isRequired
 }
 
+// functional component for rendering grid of repos.  Note that it has no state/computation...simply taking props and rendering UI, pure function
+function ReposGrid ({repos}){
+    return (
+        <ul className='grid space-around'>
+            {repos.map( (repo, index) => {
+                // deconstruct info from repo
+                const { name, owner, html_url, stargazers_count, forks, open_issues } = repo
+                const { login, avatar_url } = owner
+
+                // each return is one card
+                return (
+                    <li key={html_url} className="repo bg-light">
+                        <h4 className='header-lg center-text'>
+                            #{index+1}
+                        </h4>
+                        <img 
+                            className="avatar" 
+                            src={avatar_url} 
+                            alt={`Avatar for ${login}`} 
+                        />
+                        <h2 className='center-text'>
+                            <a className="link" href={html_url}>{login}</a>
+                        </h2>
+                        <ul className="card-list">
+                            <li>
+                                <FaUser color="rgb(255,191,116)" size={22}/>
+                                <a href={`https://github.com/${login}`}>
+                                    {login}
+                                </a>
+                            </li>
+                            <li>
+                                <FaStar color="rgb(255,215,0)" size={22}/>
+                                {stargazers_count.toLocaleString()} stars
+                            </li>
+                            <li>
+                                <FaCodeBranch color="rgb(129,195,245)" size={22}/>
+                                {forks.toLocaleString()} forks
+                            </li>
+                            <li>
+                                <FaExclamationTriangle color="rgb(241,138,147)" size={22}/>
+                                {open_issues.toLocaleString()} open issues
+                            </li>
+                        </ul>
+                    </li>
+                )
+            })}
+        </ul>
+    )
+}
+// proptypes for ReposGrid functional component
+ReposGrid.propTypes = {
+    repos: PropTypes.array.isRequired
+}
 // this is a class based component, containing state and methods
 export default class Popular extends React.Component{
     constructor(props){
@@ -52,11 +108,11 @@ export default class Popular extends React.Component{
         // this component's state.  
         this.state = {
             selectedLanguage: 'All',
-            repos: null,
-            error: null
+            repos: {},
+            error: null, 
         }
         
-        // this line ensures that whenever methods are invoked, they are invoked in the context of this constructor, where this refers to the object
+        // Ensure that whenever methods are invoked, they are invoked in the context of this constructor, where this refers to the object
         this.updateLanguage = this.updateLanguage.bind(this)
         this.isLoading = this.isLoading.bind(this)
     }
@@ -64,41 +120,43 @@ export default class Popular extends React.Component{
     // invoked whenever a new language is selected from the popular languages navbar
     updateLanguage(selectedLanguage){
 
-
         // using setState to ensure React knows we've changed state so that it can update the DOM accordingly
         this.setState({
             // this ES6 shorthand, equivalent to selectedLanguage: selectedLanguage
             selectedLanguage,
             // adding these here so that we know when loading...if both repos and error are null, then we are loading
-            repos: null,
             error: null
         })
 
-        // get data from Github API
-        fetchPopularRepos(selectedLanguage)
-            .then((repos) => {
-                // once repos obtained, update state.repos (and reset error to null)
-                this.setState({
-                    repos,
-                    error: null
+        // get data from Github API, only if not in state
+        if(!this.state.repos[selectedLanguage]){
+            fetchPopularRepos(selectedLanguage)
+                .then((data) => {
+                    // once repos obtained, update state.  using functional set state because we don't want to overwrite existing data, we are updating state based on previous data
+                    this.setState(({repos}) => ({           // state is automatically a parameter, so {repos} is destructuring repos out of state
+                        repos: {
+                            ...repos,                       // using spread operator because we want to keep all existing key/value pairs in repos
+                            [selectedLanguage]: data,       // adding a new key, using [] because selectedLanguage is a variable.  data is the return from the API
+                        }
+                    }))
                 })
-            })
-            .catch( () => {
-                // dev warning
-                console.warn('Error fetching repos: ', error);
-                
-                // show error to users by updating state.error
-                this.setState({
-                    error: "There was an error fetching the repositories."
+                .catch( () => {
+                    // dev warning
+                    console.warn('Error fetching repos: ', error);
+                    
+                    // show error to users by updating state.error
+                    this.setState({
+                        error: "There was an error fetching the repositories."
+                    })
                 })
-            })
-
-
+        }
     }
 
-    // an easy way to see if data is loading (which is true when both error and repos are null)
+    // an easy way to see if data is loading (which is true when both error and repos[selectedLanguage] are null)
     isLoading(){
-        return this.state.repos === null && this.state.error === null
+        const {selectedLanguage, repos, error} = this.state
+
+        return !repos[selectedLanguage] && error == null
     }
 
     // for loading first language when page loads/component is mounted to DOM
@@ -117,9 +175,9 @@ export default class Popular extends React.Component{
                     selected={selectedLanguage} 
                     onUpdateLanguage={this.updateLanguage}
                 />
-                {this.isLoading() && <p>Loading...</p>}  {/*"Loading..." will only display if isLoading() is true*/}
+                {this.isLoading() && <p>Loading...</p>}  {/* By using && in this way, "Loading..." will only display if isLoading() is true*/}
                 {error && {error}}
-                {repos && <pre>{JSON.stringify(repos,null,2)}</pre>}
+                {repos[selectedLanguage] && <ReposGrid repos={repos[selectedLanguage]}/>}
             </React.Fragment>
         )
     }
