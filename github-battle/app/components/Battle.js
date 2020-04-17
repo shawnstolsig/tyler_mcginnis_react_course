@@ -138,8 +138,6 @@ PlayerPreview.propTypes = {
 
 }
 
-
-
 // our Battle component
 export default class Battle extends React.Component {
     constructor(props){
