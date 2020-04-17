@@ -167,12 +167,24 @@ export default class Battle extends React.Component {
         })
     }
 
+
+
     render() {
         const { playerOne, playerTwo, battle } = this.state
 
         // this has a separate return, so all the other UI elements with player input/preview are skipped
         if(battle){
-            return <Results playerOne={playerOne} playerTwo={playerTwo}/>
+            return (
+                <Results 
+                    playerOne={playerOne} 
+                    playerTwo={playerTwo}
+                    onReset={ () => this.setState({
+                        playerOne: null,
+                        playerTwo: null, 
+                        battle: false
+                    })}
+                    />
+            )
         }
 
         // instructions, player input/preview, and battle button UI description
