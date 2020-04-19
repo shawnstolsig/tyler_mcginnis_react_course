@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import withHover from './withHover'
 
 // styles for tooltip
 const styles = {
@@ -24,49 +25,22 @@ const styles = {
     }
 }
 
-// class component for tooltip.  this is a higher order component, that adds a tooltip onto the callback component
-export default class Tooltip extends React.Component {
-    constructor(props){
-        super(props)
+// a functional component, takes in the text of the tooltip and returns/describes the tooltip UI.  note that hovering logic is not contained here, but in the higher-order component withHover
+function Tooltip({ text, children, hovering }){
+    return (
+        <div style={styles.container}>
+                { hovering && <div style={styles.tooltip}>{text}</div> }
+                {/* Must render the actual content from the lower order component, using children prop */}
+                { children }
+        </div>
 
-        this.state = {
-            hovering: false,
-        }
-
-        this.mouseOver = this.mouseOver.bind(this)
-        this.mouseOut = this.mouseOut.bind(this)
-    }
-
-    // hovering methods: moustOver and mouseOut
-    mouseOver(){
-        this.setState({
-            hovering: true
-        })
-    }
-    mouseOut(){
-        this.setState({
-            hovering: false
-        })
-    }
-
-
-    render(){
-        const { text, children } = this.props
-        const { hovering } = this.state
-
-        return (
-            <div 
-                style={styles.container}
-                onMouseOver={this.mouseOver} 
-                onMouseOut={this.mouseOut}>
-                    { hovering && <div style={styles.tooltip}>{text}</div> }
-                    {/* Must render the actual content from the lower order component, using children prop */}
-                    { children }
-            </div>
-
-        )
-    }
+    )
 }
 Tooltip.propTypes = {
-    text: PropTypes.string.isRequired
+    text: PropTypes.string.isRequired,
+    hovering: PropTypes.bool.isRequired
 }
+
+// withHover will contain the hovering logic for our tooltip.  so what we are actually exporting is a call to the higher order component
+export default withHover(Tooltip, 'hovering') 
+
