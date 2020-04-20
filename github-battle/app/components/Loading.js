@@ -10,18 +10,13 @@ const styles = {
         right: '0',
         marginTop: '20px',
         textAlign: 'center'
-
     }
 }
 
 // a component that renders "Loading" "Loading." "Loading.." Loading...""
 export default class Loading extends React.Component{
-    constructor(props){
-        super(props)
-
-        this.state = {
-            content: props.text
-        }
+    state = {
+        content: this.props.text
     }
 
     // start the intervals when Loading component mounts

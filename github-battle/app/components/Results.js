@@ -50,17 +50,13 @@ ProfileList.propTypes = {
 // This component renders the results of the battle
 export default class Results extends React.Component{
     
-    constructor(props){
-        super(props)
-
-        this.state  = {
-            winner: null,
-            loser: null,
-            error: null,
-            loading: true,
-        }
+    state  = {
+        winner: null,
+        loser: null,
+        error: null,
+        loading: true,
     }
-
+    
     // component will mount when the 'battle' button is clicked.  this is a good place to invoke battle function to actually play the game
     componentDidMount(){
         const {playerOne, playerTwo } = queryString.parse(this.props.location.search)

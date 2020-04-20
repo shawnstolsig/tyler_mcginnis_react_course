@@ -37,15 +37,8 @@ function Instructions(){
 
 // our Player component
 class PlayerInput extends React.Component{
-    constructor(props){
-        super(props)
-
-        this.state = {
-            username: '',
-        }
-
-        this.handleSubmit = this.handleSubmit.bind(this)
-        this.handleChange = this.handleChange.bind(this)
+    state = {
+        username: '',
     }
 
     render(){
@@ -85,7 +78,7 @@ class PlayerInput extends React.Component{
         )
     }
     // this function is invoked whenever player name is submitted
-    handleSubmit(event){
+    handleSubmit = (event) => {
         // prevent normal browser events
         event.preventDefault()
 
@@ -93,7 +86,7 @@ class PlayerInput extends React.Component{
         this.props.onSubmit(this.state.username)
     }
     // invoked whenever input field changes.  this allows us to use controlled (instead of uncontrolled) input fields
-    handleChange(event){
+    handleChange = (event) => {
         // update state, trigger re-render
         this.setState({
             username: event.target.value
@@ -146,38 +139,28 @@ PlayerPreview.propTypes = {
     userName: PropTypes.string.isRequired,
     onReset: PropTypes.func.isRequired,
     label: PropTypes.string.isRequired
-
 }
 
 // our Battle component
 export default class Battle extends React.Component {
-    constructor(props){
-        super(props)
-
-        this.state = {
-            playerOne: null,
-            playerTwo: null,
-        }
-
-        this.handleSubmit = this.handleSubmit.bind(this)
-        this.handleReset = this.handleReset.bind(this)
+    state = {
+        playerOne: null,
+        playerTwo: null,
     }
 
     // when input field "form" is submitted, store player names in state
-    handleSubmit(id, player){
+    handleSubmit = (id, player) => {
         this.setState({
             [id]: player
         })
     }
 
     // this will set player one or two to null whenever invoked.  will be invoked by the PlayerPreview X button
-    handleReset(id){
+    handleReset = (id) => {
         this.setState({
             [id]: null
         })
     }
-
-
 
     render() {
         const { playerOne, playerTwo } = this.state

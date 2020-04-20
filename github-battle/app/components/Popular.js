@@ -102,24 +102,14 @@ ReposGrid.propTypes = {
 }
 // this is a class based component, containing state and methods
 export default class Popular extends React.Component{
-    constructor(props){
-        // obligatory super(props) invocation
-        super(props)
-
-        // this component's state.  
-        this.state = {
-            selectedLanguage: 'All',
-            repos: {},
-            error: null, 
-        }
-        
-        // Ensure that whenever methods are invoked, they are invoked in the context of this constructor, where this refers to the object
-        this.updateLanguage = this.updateLanguage.bind(this)
-        this.isLoading = this.isLoading.bind(this)
+    state = {
+        selectedLanguage: 'All',
+        repos: {},
+        error: null, 
     }
 
     // invoked whenever a new language is selected from the popular languages navbar
-    updateLanguage(selectedLanguage){
+    updateLanguage = (selectedLanguage) => {
 
         // using setState to ensure React knows we've changed state so that it can update the DOM accordingly
         this.setState({
@@ -154,7 +144,7 @@ export default class Popular extends React.Component{
     }
 
     // an easy way to see if data is loading (which is true when both error and repos[selectedLanguage] are null)
-    isLoading(){
+    isLoading = () => {
         const {selectedLanguage, repos, error} = this.state
 
         return !repos[selectedLanguage] && error == null

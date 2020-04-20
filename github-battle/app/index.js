@@ -11,17 +11,13 @@ import { ThemeProvider } from './contexts/Theme'
 
 
 class App extends React.Component{
-    constructor(props){
-        super(props)
-
-        this.state = {
-            theme: 'light',
-            // we are putting this toggleTheme method inside of state because we will need to be able to access it anywhere within the ThemeContext
-            toggleTheme: () => {
-                this.setState(({ theme }) => ({
-                    theme: theme === 'light' ? 'dark' : 'light'
-                }))
-            }
+    state = {
+        theme: 'light',
+        // we are putting this toggleTheme method inside of state because we will need to be able to access it anywhere within the ThemeContext
+        toggleTheme: () => {
+            this.setState(({ theme }) => ({
+                theme: theme === 'light' ? 'dark' : 'light'
+            }))
         }
     }
 
@@ -46,7 +42,6 @@ class App extends React.Component{
                                 <Route render={() => <h1>404</h1>} />
                             </Switch>
 
-
                         </div>
                     </div>
                 </ThemeProvider>
@@ -59,4 +54,3 @@ ReactDom.render(
     <App />,
     document.getElementById('app')
 )
-
