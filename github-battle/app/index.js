@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDom from 'react-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import './index.css'
 import Popular from './components/popular'
@@ -26,16 +27,24 @@ class App extends React.Component{
 
     render(){
         return(
-            // wrapping entire app inside of ThemeProvider so that all child components will have access to theme and toggleTheme
-            <ThemeProvider value={this.state}>
-                <div className={this.state.theme}>
-                    <div className='container'>
-                        <Nav/>
-                        {/* <Battle /> */}
-                        <Popular />
+            // Wrapping entire app inside Router to give child components route information/context
+            <Router>
+                {/* wrapping entire app inside of ThemeProvider so that all child components will have access to theme and toggleTheme */}
+                <ThemeProvider value={this.state}>
+                    <div className={this.state.theme}>
+                        <div className='container'>
+
+                            {/* navbar (always there) */}
+                            <Nav/>
+
+                            {/* Routes */}
+                            <Route exact path="/" component={Popular} />
+                            <Route path="/battle" component={Battle} />
+
+                        </div>
                     </div>
-                </div>
-            </ThemeProvider>
+                </ThemeProvider>
+            </Router>
         )
     }
 }
