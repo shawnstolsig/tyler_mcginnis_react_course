@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import withHover from './withHover'
+// import withHover from './withHover'         version not using render props
+import Hover from './Hover'
 
 // styles for tooltip
 const styles = {
@@ -25,22 +26,42 @@ const styles = {
     }
 }
 
-// a functional component, takes in the text of the tooltip and returns/describes the tooltip UI.  note that hovering logic is not contained here, but in the higher-order component withHover
-function Tooltip({ text, children, hovering }){
+// using render props.  this Tooltip is a non-UI component, since it only renders another component
+export default function Tooltip({ text, children, hovering }){
     return (
-        <div style={styles.container}>
-                { hovering && <div style={styles.tooltip}>{text}</div> }
-                {/* Must render the actual content from the lower order component, using children prop */}
-                { children }
-        </div>
-
+        <Hover>
+            {/* this is a function that will be invoked within Hover's return() that will render the tooltip */}
+            {/* naming collision is avoided because the name of parameter is decided and used here....it isn't going to collide with any Hover props */}
+            { (hovering) => (
+                <div style={styles.container}>
+                    { hovering && <div style={styles.tooltip}>{text}</div> }
+                    {/* Must render the actual content from the lower order component, using children prop */}
+                    { children }
+                </div>
+            )}
+        </Hover>
     )
 }
 Tooltip.propTypes = {
     text: PropTypes.string.isRequired,
-    hovering: PropTypes.bool.isRequired
+    // hovering: PropTypes.bool.isRequired
 }
 
+
+// *************************   EVERYTHING BELOW IS WITHOUT USING RENDER PROPS, NOT PREFERRED  *******************************
+// a functional component, takes in the text of the tooltip and returns/describes the tooltip UI.  note that hovering logic is not contained here, but in the higher-order component withHover
+// function Tooltip({ text, children, hovering }){
+//     return (
+//         <div style={styles.container}>
+//                 { hovering && <div style={styles.tooltip}>{text}</div> }
+//                 {/* Must render the actual content from the lower order component, using children prop */}
+//                 { children }
+//         </div>
+
+//     )
+// }
+
+
 // withHover will contain the hovering logic for our tooltip.  so what we are actually exporting is a call to the higher order component
-export default withHover(Tooltip, 'hovering') 
+// export default withHover(Tooltip, 'hovering') 
 

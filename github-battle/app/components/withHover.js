@@ -1,5 +1,10 @@
 import React from 'react'
 
+
+// This was the first revision using regular higher order component.  Uncomment code in Tooltip.js to use.
+// This method is not preferred compared to using render props since you have to take extra steps to prevent 
+// naming collisions and you still must deal with inversion of control.  Hover.js is the updated version.
+
 // a higher order component.  takes in a component and returns it with a 'hovering' prop added, true/false if the component is being hovered over
 export default function withHover(Component, propName = "hovering"){
     return class WithHover extends React.Component {
