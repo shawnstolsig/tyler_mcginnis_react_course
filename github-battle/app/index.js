@@ -3,11 +3,14 @@ import ReactDom from 'react-dom'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import './index.css'
-import Popular from './components/Popular'
 import Nav from './components/Nav'
-import Results from './components/Results'
-import Battle from './components/Battle'
 import { ThemeProvider } from './contexts/Theme'
+import Loading from './components/Loading'
+
+// Dynamic import syntax...only import modules when needed by Router
+const Popular = React.lazy(() => import('./components/Popular'))
+const Battle = React.lazy(() => import('./components/Battle'))
+const Results = React.lazy(() => import('./components/Results'))
 
 
 class App extends React.Component{
@@ -35,12 +38,15 @@ class App extends React.Component{
                             <Nav/>
 
                             {/* Routes */}
-                            <Switch>
-                                <Route exact path="/" component={Popular} />
-                                <Route exact path="/battle" component={Battle} />
-                                <Route path="/battle/results" component={Results} />
-                                <Route render={() => <h1>404</h1>} />
-                            </Switch>
+                            {/* Suspense element will load fallback whenever the children take too long to load */}
+                            <React.Suspense fallback={Loading}>
+                                <Switch>
+                                    <Route exact path="/" component={Popular} />
+                                    <Route exact path="/battle" component={Battle} />
+                                    <Route path="/battle/results" component={Results} />
+                                    <Route render={() => <h1>404</h1>} />
+                                </Switch>
+                            </React.Suspense>
 
                         </div>
                     </div>
