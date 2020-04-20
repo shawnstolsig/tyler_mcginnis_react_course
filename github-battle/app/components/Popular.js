@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Card from './card'
-import Loading from './loading'
-import Tooltip from './tooltip'
+import Card from './Card'
+import Loading from './Loading'
+import Tooltip from './Tooltip'
 
 import { fetchPopularRepos } from '../utils/api.js'  // using named import since no default export from api.js
 import { FaUser, FaStar, FaCodeBranch, FaExclamationTriangle } from 'react-icons/fa'

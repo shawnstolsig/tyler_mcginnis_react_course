@@ -1,10 +1,12 @@
 import React from 'react'
 import { battle } from '../utils/api'
 import { FaCompass, FaBriefcase, FaUsers, FaUserFriends, FaCode, FaUser } from 'react-icons/fa'
-import Card from './card'
-import Loading from './loading'
+import Card from './Card'
+import Loading from './Loading'
 import PropTypes from 'prop-types'
-import Tooltip from './tooltip'
+import Tooltip from './Tooltip'
+import queryString from 'query-string'
+import { Link } from 'react-router-dom'
 
 
 function ProfileList({profile}){
@@ -61,7 +63,7 @@ export default class Results extends React.Component{
 
     // component will mount when the 'battle' button is clicked.  this is a good place to invoke battle function to actually play the game
     componentDidMount(){
-        const {playerOne, playerTwo, onReset} = this.props
+        const {playerOne, playerTwo } = queryString.parse(this.props.location.search)
 
         // battle!
         battle([playerOne, playerTwo])
@@ -116,7 +118,7 @@ export default class Results extends React.Component{
                         subheader={`Score: ${winner.score.toLocaleString()}`}
                         avatar={winner.profile.avatar_url}
                         href={winner.profile.html_url}
-                        name={winner.profile.name}
+                        name={winner.profile.login}
                         >
                         <ProfileList profile={winner.profile}/>
                     </Card>
@@ -135,14 +137,12 @@ export default class Results extends React.Component{
                 </div>
 
                 {/* reset button */}
-                <button className="btn dark-btn btn-space" onClick={this.props.onReset}>Reset</button>
+                <Link 
+                    className="btn dark-btn btn-space" 
+                    to='/battle'
+                    >Reset
+                </Link>
             </React.Fragment>
         )
     }
 }   
-
-Results.propTypes = {
-    playerOne: PropTypes.string.isRequired,
-    playerTwo: PropTypes.string.isRequired,
-    onReset: PropTypes.func.isRequired
-}

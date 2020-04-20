@@ -2,8 +2,9 @@ import React from 'react'
 
 import PropTypes from 'prop-types'
 import { FaUserFriends, FaFighterJet, FaTrophy, FaTimesCircle } from 'react-icons/fa'
-import Results from './results'
+import Results from './Results'
 import { ThemeConsumer } from '../contexts/Theme'
+import { Link } from 'react-router-dom'
 
 // a functional component for the instructions section
 function Instructions(){
@@ -101,7 +102,7 @@ class PlayerInput extends React.Component{
 }
 
 // proptypes for Player
-PlayerInput.proptypes = {
+PlayerInput.propTypes = {
     onSubmit: PropTypes.func.isRequired,
     label: PropTypes.string.isRequired,
 }
@@ -156,7 +157,6 @@ export default class Battle extends React.Component {
         this.state = {
             playerOne: null,
             playerTwo: null,
-            battle: false,
         }
 
         this.handleSubmit = this.handleSubmit.bind(this)
@@ -180,22 +180,7 @@ export default class Battle extends React.Component {
 
 
     render() {
-        const { playerOne, playerTwo, battle } = this.state
-
-        // this has a separate return, so all the other UI elements with player input/preview are skipped
-        if(battle){
-            return (
-                <Results 
-                    playerOne={playerOne} 
-                    playerTwo={playerTwo}
-                    onReset={ () => this.setState({
-                        playerOne: null,
-                        playerTwo: null, 
-                        battle: false
-                    })}
-                    />
-            )
-        }
+        const { playerOne, playerTwo } = this.state
 
         // instructions, player input/preview, and battle button UI description
         return (
@@ -231,13 +216,16 @@ export default class Battle extends React.Component {
                     }
                 </div>
                     {playerOne && playerTwo && (
-                        <button 
+                        <Link 
                             className="btn dark-btn btn-space"
                             // using setstate here triggers a re-render, which dumps all the other UI elements with battle=true
-                            onClick={() => this.setState({battle: true})}
+                            to={{
+                                pathname: '/battle/results',
+                                search: `?playerOne=${playerOne}&playerTwo=${playerTwo}`
+                            }}
                             >
                             Battle
-                        </button>
+                        </Link>
                     )}
 
             </React.Fragment>
