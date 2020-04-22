@@ -5,7 +5,6 @@ export function getItem(id){
     return fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json?print=pretty`)
              // convert json to object
             .then((res) => res.json())
-            .then((data) => data )
 }
 
 // get 50 top story ids
@@ -20,6 +19,7 @@ export function top50Ids(){
             if (data.length > 50){
                 return data.slice(0,50)
             }
+            
             return data
         })
 }
@@ -40,3 +40,4 @@ export function new50Ids(){
         })
 
 }
+

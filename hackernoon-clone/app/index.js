@@ -10,12 +10,10 @@ import './index.css'
 import Loading from './components/Loading'
 import Nav from './components/Nav'
 import { ThemeProvider } from './contexts/Theme'
+import { new50Ids, top50Ids } from './util/api'
 
 // Dynamic imports
-const Top = React.lazy( () => import('./components/Top'))
-const New = React.lazy( () => import('./components/New'))
-
-
+const List = React.lazy( () => import('./components/List'))
 
 // Main App
 class App extends React.Component {
@@ -28,6 +26,7 @@ class App extends React.Component {
         }
     }
     render(){
+ 
         return (
 
             <Router>
@@ -38,8 +37,16 @@ class App extends React.Component {
 
                             <React.Suspense fallback={Loading}>
                                 <Switch>
-                                    <Route exact path="/" component={New} />
-                                    <Route exact path="/top" component={Top} />
+                                    <Route 
+                                        exact 
+                                        path="/" 
+                                        render={(props) => <List {...props} getIds={top50Ids}/>}
+                                    /> 
+                                    <Route 
+                                        exact 
+                                        path="/new" 
+                                        render={(props) => <List {...props} getIds={new50Ids}/>}
+                                    /> 
                                     <Route render={() => <h1>404</h1>} />
                                 </Switch>
                             </React.Suspense>

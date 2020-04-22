@@ -2,7 +2,7 @@ html, body, #app {
     margin: 0;
     height: 100%;
     width: 100%;
-
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .dark {
@@ -21,17 +21,53 @@ html, body, #app {
 .nav-bar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .nav-bar .link {
     margin-right: 30px;
+
 }
 
 .post-container {
-    background: #adadad;
+    /* background: #dfdede; */
     border-radius: 6px; 
+    padding: 3px;
+    margin: 3px;
+}
+
+.post-container * {
+    padding: 3px;
 }
 
 li {
     list-style-type: none;
+}
+
+.btn-clr {
+    background-color: rgba(0,0,0,0);
+    border: none;
+    font-size: 24px;
+}
+
+.link {
+    text-decoration: none;
+    font-size: 24px;
+}
+
+ol {
+    padding: 0;
+    list-style-type: none;
+}
+
+a {
+    color: red;
+}
+
+p { 
+    margin: 0;
+}
+
+h4 {
+    margin: 0;
 }

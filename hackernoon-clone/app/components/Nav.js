@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 import { ThemeConsumer } from '../contexts/Theme'
 
 const activeLinkStyle = {
-    color: 'red',
+    color: 'green',
 }
 
 export default function Nav(){
@@ -13,11 +13,25 @@ export default function Nav(){
             {  ({theme, toggleTheme}) => (
                 <div className="nav-bar">
                     <div>
-                        <NavLink exact className="link" to="/" activeStyle={activeLinkStyle}>New</NavLink>
-                        <NavLink exact className="link" to="/top" activeStyle={activeLinkStyle}>Top</NavLink>
+                        <NavLink 
+                            exact 
+                            className="link" 
+                            to="/" 
+                            activeStyle={activeLinkStyle}
+                            >Top
+                        </NavLink>
+                        <NavLink 
+                            exact 
+                            className="link" 
+                            to="/new" 
+                            activeStyle={activeLinkStyle}
+                            >New
+                        </NavLink>
                     </div>
-                    <button onClick={toggleTheme}>
-                        Theme
+                    <button 
+                        onClick={toggleTheme}
+                        className="btn-clr">
+                        { theme === 'dark' ? '🌞' : '🌚' }
                     </button>
                 </div>
             )}

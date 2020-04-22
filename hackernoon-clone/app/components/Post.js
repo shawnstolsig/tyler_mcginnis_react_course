@@ -21,7 +21,6 @@ export default class Post extends React.Component {
         // get item's data from api
         getItem(itemId)
         .then((itemData) => {
-            console.log('itemData', itemData)
 
             // store item's data in state
             this.setState({
@@ -29,7 +28,7 @@ export default class Post extends React.Component {
                 url: itemData.url,
                 user: itemData.by,
                 time: itemData.time,
-                comments: itemData.kids
+                comments: itemData.descendants
             })
         })
         .catch
@@ -37,13 +36,16 @@ export default class Post extends React.Component {
     render (){
         const { title, url, user, time, comments } = this.state
 
+        if(title == null){
+            return ''
+        }
 
         return (
             <ThemeConsumer>
                 {({ theme }) => (
                     <div className="post-container">
                         <h4><a href={url}>{title}</a></h4>
-                        <p>by {user} at {time} with {comments && comments.length} comments</p>
+                        <p>by {user} at {time} with {comments} comment{comments == 1 ? '' : 's'}</p>
                     </div>
                 )}
             </ThemeConsumer>

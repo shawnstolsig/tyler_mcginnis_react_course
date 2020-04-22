@@ -1,16 +1,28 @@
 import React from 'react'
 
 import Post from './Post'
-import { top50Ids } from '../util/api'
+import Loading from './Loading'
 import { ThemeConsumer } from '../contexts/Theme'
 
-export default class Top extends React.Component{
+export default class New extends React.Component{
     state = {
         stories: []
     }
     componentDidMount(){
+        const { getIds } = this.props
+
         // get 50 new story ids, set them in state
-        top50Ids().then((stories) => {
+        getIds().then((stories) => {
+            this.setState({
+                stories
+            })
+        })
+    }
+    componentWillUpdate(){
+        const { getIds } = this.props
+
+        // get 50 new story ids, set them in state
+        getIds().then((stories) => {
             this.setState({
                 stories
             })
@@ -18,6 +30,10 @@ export default class Top extends React.Component{
     }
     render () {
         const { stories } = this.state
+
+        if(stories == []){
+            return <Loading text="Getting stories..." />
+        }
 
         return (
             <ol>
