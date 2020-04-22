@@ -1,35 +1,60 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export default class Loading extends React.Component {
+// you can instantiate a styles object to keep styling self-contained within a component
+const styles = {
+    content: {
+        fontSize: '35px',
+        position: 'absolute',
+        left: '0',
+        right: '0',
+        marginTop: '20px',
+        textAlign: 'center'
+    }
+}
+
+// a component that renders "Loading" "Loading." "Loading.." Loading...""
+export default class Loading extends React.Component{
     state = {
-        text: this.props.text
+        content: this.props.text
     }
+
+    // start the intervals when Loading component mounts
     componentDidMount(){
-        this.timer = window.setInterval(() => {
-            this.setState(({text}) => ({
-                text: text === `${this.props.text}...` 
-                    ? this.props.text
-                    : text + '.'
-            }))
-        }, this.props.timer)
+
+        const { text, speed } = this.props
+
+        // store a reference to the interval so it can be referenced later in componentWillUnmount/clearInterval
+        this.interval = window.setInterval( () => {
+            {this.state.content === text + '...' 
+                ? this.setState({
+                    content: text 
+                })
+                : this.setState( ({content}) => ({
+                    content: content + '.'
+                }))
+            }
+        }, speed)
     }
+
+    // need to clear setInterval when Loading component unmounts so that there isn't still a function running on an unmounted component (memory leak)
     componentWillUnmount(){
-        window.clearInterval(this.timer)
+        window.clearInterval(this.interval)
     }
+
     render(){
-        const { text } = this.state
         return (
-            <div>{text}</div>
+            <p style={styles.content}>
+                {this.state.content}
+            </p>
         )
     }
 }
-// prop types and default values
 Loading.propTypes = {
-    text: PropTypes.string,
-    timer: PropTypes.number
+    text: PropTypes.string.isRequired,
+    speed: PropTypes.number.isRequired,
 }
 Loading.defaultProps = {
-    text: "Loading",
-    timer: 300
+    text: 'Loading',
+    speed: 300
 }

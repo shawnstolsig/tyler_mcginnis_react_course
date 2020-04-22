@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link }  from 'react-router-dom'
+import * as moment from 'moment'
 
 import { ThemeConsumer } from '../contexts/Theme'
 import { getItem } from '../util/api'
@@ -27,13 +29,13 @@ export default class Post extends React.Component {
                 title: itemData.title,
                 url: itemData.url,
                 user: itemData.by,
-                time: itemData.time,
+                time: moment.unix(itemData.time).format("M/D/YYYY, h:mm a"),
                 comments: itemData.descendants
             })
         })
-        .catch
     }
     render (){
+        const { itemId } = this.props
         const { title, url, user, time, comments } = this.state
 
         if(title == null){
@@ -45,7 +47,24 @@ export default class Post extends React.Component {
                 {({ theme }) => (
                     <div className="post-container">
                         <h4><a href={url}>{title}</a></h4>
-                        <p>by {user} at {time} with {comments} comment{comments == 1 ? '' : 's'}</p>
+                        <p>by 
+                            <Link 
+                                to={{
+                                    pathname: '/user',
+                                    search: `?user=${user}`
+                                }}
+                                className="user-link"
+                                >{user}
+                            </Link>
+                            at {time} with 
+                            <Link
+                                to={{
+                                    pathname: '/post',
+                                    search: `?id=${itemId}`
+                                }}
+                                className="user-link"
+                            >{comments}
+                            </Link> comment{comments == 1 ? '' : 's'}</p>
                     </div>
                 )}
             </ThemeConsumer>

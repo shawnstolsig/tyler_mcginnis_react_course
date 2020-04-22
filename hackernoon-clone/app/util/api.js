@@ -41,3 +41,10 @@ export function new50Ids(){
 
 }
 
+
+// get user 
+export function getUser(id){
+
+    return fetch(`https://hacker-news.firebaseio.com/v0/user/${id}.json?print=pretty`)
+        .then((res) => res.json())
+}

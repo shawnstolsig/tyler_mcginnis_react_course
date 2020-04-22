@@ -18,7 +18,7 @@ export default class New extends React.Component{
             })
         })
     }
-    componentWillUpdate(){
+    componentDidUpdate(){
         const { getIds } = this.props
 
         // get 50 new story ids, set them in state

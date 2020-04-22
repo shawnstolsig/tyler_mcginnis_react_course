@@ -14,6 +14,8 @@ import { new50Ids, top50Ids } from './util/api'
 
 // Dynamic imports
 const List = React.lazy( () => import('./components/List'))
+const User = React.lazy( () => import('./components/User'))
+const Detail = React.lazy( () => import('./components/Detail'))
 
 // Main App
 class App extends React.Component {
@@ -47,6 +49,16 @@ class App extends React.Component {
                                         path="/new" 
                                         render={(props) => <List {...props} getIds={new50Ids}/>}
                                     /> 
+                                    <Route  
+                                        exact
+                                        path="/user"
+                                        component={User}
+                                    />
+                                    <Route  
+                                        exact
+                                        path="/post"
+                                        component={Detail}
+                                    />
                                     <Route render={() => <h1>404</h1>} />
                                 </Switch>
                             </React.Suspense>
