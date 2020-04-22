@@ -15,6 +15,11 @@ export function top50Ids(){
         .then((res) => res.json())
         .then((data) => {
 
+            // handle error if no id's
+            if(!data) {
+                throw new Error("There was an arror fetching top posts. ")
+            }
+
             // if more than 50 stories returned, only return top 50 
             if (data.length > 50){
                 return data.slice(0,50)
@@ -31,6 +36,11 @@ export function new50Ids(){
         // first endpoint returns an array of story ids
         .then((res) => res.json())
         .then((data) => {
+
+            // handle error if no id's
+            if(!data) {
+                throw new Error("There was an arror fetching top posts. ")
+            }
 
             // if more than 50 stories returned, only return top 50 
             if (data.length > 50){

@@ -1,17 +1,18 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import Post from './Post'
 import Loading from './Loading'
 import { ThemeConsumer } from '../contexts/Theme'
 
-export default class New extends React.Component{
+export default class List extends React.Component{
     state = {
         stories: []
     }
     componentDidMount(){
         const { getIds } = this.props
 
-        // get 50 new story ids, set them in state
+        // get 50 story ids, set them in state
         getIds().then((stories) => {
             this.setState({
                 stories
@@ -26,6 +27,9 @@ export default class New extends React.Component{
             this.setState({
                 stories
             })
+        })
+        .catch((err) => {
+            alert(err.message)
         })
     }
     render () {
@@ -45,4 +49,7 @@ export default class New extends React.Component{
             </ol>
         )
     }
+}
+List.propTypes = {
+    getIds: PropTypes.func.isRequired
 }
