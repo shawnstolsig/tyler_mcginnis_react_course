@@ -2,6 +2,7 @@ import React from 'react'
 import * as moment from 'moment'
 import { getItem } from '../util/api'
 import { Link } from 'react-router-dom'
+import { ThemeConsumer } from '../contexts/Theme'
 
 export default class Comment extends React.Component {
     state = {
@@ -33,18 +34,23 @@ export default class Comment extends React.Component {
         const { user, time, kids, text } = this.state
 
         return (
-            <div className="comment-container">
-                <p>by <Link 
-                        to={{
-                            pathname: '/user',
-                            search: `?user=${user}`
-                        }}
-                        className="user-link"
-                        >{user}
-                    </Link> at {time}: 
-                </p>
-                <div dangerouslySetInnerHTML={{__html: text}} />
-            </div>
+            <ThemeConsumer>
+                {({theme}) => (
+                    <div className={`comment-container-${theme}`}>
+                        <p>by <Link 
+                                to={{
+                                    pathname: '/user',
+                                    search: `?user=${user}`
+                                }}
+                                className="user-link"
+                                >{user}
+                            </Link> at {time}: 
+                        </p>
+                        <div dangerouslySetInnerHTML={{__html: text}} />
+                    </div>
+                )}
+                
+            </ThemeConsumer>
         )
     }
 }

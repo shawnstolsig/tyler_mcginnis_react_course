@@ -40,11 +40,19 @@ html, body, #app {
     padding: 3px;
 }
 
-.comment-container {
+.comment-container-light {
     background: #dfdede;
     border-radius: 6px; 
-    padding: 3px;
-    margin: 3px;
+    padding: 12px 12px;
+    margin: 12px 0;
+}
+
+.comment-container-dark {
+    background: #3a3a3a;
+    color: #fafafa;
+    border-radius: 6px; 
+    padding: 12px 12px;
+    margin: 12px 0;
 }
 
 li {
@@ -71,13 +79,16 @@ ol {
     list-style-type: none;
 }
 
+h4 a {
+    text-decoration: none;
+}
 a {
     color: red;
 }
 
-/* p { 
-    margin: 0;
-} */
+p { 
+    margin-top: 0;
+}
 
 h4 {
     margin: 0;
