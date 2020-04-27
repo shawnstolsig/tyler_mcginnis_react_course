@@ -6,7 +6,7 @@ import Card from './Card'
 import Loading from './Loading'
 import Tooltip from './Tooltip'
 
-function LangaugesNav ({ selected, onUpdateLanguage }) {
+function LanguagesNav ({ selected, onUpdateLanguage }) {
   const languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python']
 
   return (
@@ -25,7 +25,7 @@ function LangaugesNav ({ selected, onUpdateLanguage }) {
   )
 }
 
-LangaugesNav.propTypes = {
+LanguagesNav.propTypes = {
   selected: PropTypes.string.isRequired,
   onUpdateLanguage: PropTypes.func.isRequired
 }
@@ -79,61 +79,84 @@ ReposGrid.propTypes = {
   repos: PropTypes.array.isRequired
 }
 
-export default class Popular extends React.Component {
-  state = {
-    selectedLanguage: 'All',
-    repos: {},
-    error: null,
-  }
-  componentDidMount () {
-    this.updateLanguage(this.state.selectedLanguage)
-  }
-  updateLanguage = (selectedLanguage) => {
-    this.setState({
-      selectedLanguage,
-      error: null,
-    })
 
-    if (!this.state.repos[selectedLanguage]) {
+function reducer(state, action){
+  if(action.type === 'fetch'){
+    return {
+      ...state,
+      loading: true,
+      error: null,
+      repos: null
+    }
+  } else if (action.type === 'success'){
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      repos: action.data
+    }
+  } else if (action.type === 'error'){
+    return {
+      ...state,
+      loading: false,
+      error: 'Failed to retrieve data',
+    }
+  } else if (action.type === 'changeLanguage'){
+    return {
+      ...state,
+      selectedLanguage: action.data
+    }
+  } else {
+    throw new Error("Not a valid action for reducer.")
+  }
+}
+
+
+export default function Popular(){
+  const initialState = {
+    selectedLanguage: 'All',
+    loading: false,
+    error: null,
+    repos: null
+  }
+  const [{selectedLanguage, loading, error, repos}, dispatch] = React.useReducer(reducer, initialState)
+
+  // useEffect for loading language.  call updateLanguage on initial render and whenever selectedLanguage changes
+  React.useEffect( () => {
+    updateLanguage(language)
+  }, [selectedLanguage])
+
+  // update this for reducer
+  const updateLanguage = (selectedLanguage) => {
+    dispatch({type: 'fetch'})
+
+    if (!repos[selectedLanguage]) {
+
       fetchPopularRepos(selectedLanguage)
         .then((data) => {
-          this.setState(({ repos }) => ({
-            repos: {
-              ...repos,
-              [selectedLanguage]: data
-            }
-          }))
+
+          repos[selectedLanguage] = data
+          dispatch({type: 'success', data: repos})
         })
         .catch(() => {
-          console.warn('Error fetching repos: ', error)
-
-          this.setState({
-            error: `There was an error fetching the repositories.`
-          })
+          dispatch({type: 'error'})
         })
     }
   }
-  isLoading = () => {
-    const { selectedLanguage, repos, error } = this.state
 
-    return !repos[selectedLanguage] && error === null
-  }
-  render() {
-    const { selectedLanguage, repos, error } = this.state
+  return (
+    <React.Fragment>
+      <LanguagesNav
+        selected={selectedLanguage}
+        onUpdateLanguage={updateLanguage}
+      />
 
-    return (
-      <React.Fragment>
-        <LangaugesNav
-          selected={selectedLanguage}
-          onUpdateLanguage={this.updateLanguage}
-        />
+      {loading && <Loading text='Fetching Repos' />}
 
-        {this.isLoading() && <Loading text='Fetching Repos' />}
+      {error && <p className='center-text error'>{error}</p>}
 
-        {error && <p className='center-text error'>{error}</p>}
+      {repos[selectedLanguage] && <ReposGrid repos={repos[selectedLanguage]} />}
+    </React.Fragment>
+  )
 
-        {repos[selectedLanguage] && <ReposGrid repos={repos[selectedLanguage]} />}
-      </React.Fragment>
-    )
-  }
 }

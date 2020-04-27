@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Hover from './Hover'
+import useHover from '../hooks/useHover'
 
 const styles = {
   container: {
@@ -25,15 +25,16 @@ const styles = {
 }
 
 export default function Tooltip ({ text, children }) {
+  const [ hovering, attr ] = useHover()
+
   return (
-    <Hover>
-      {(hovering) => (
-        <div style={styles.container}>
+
+        // the spread operator here adds the functions (mouseOver and mouseOut) that change the hovering state
+        <div style={styles.container} {...attr}>
           {hovering === true && <div style={styles.tooltip}>{text}</div>}
           {children}
         </div>
-      )}
-    </Hover>
+
   )
 }
 
