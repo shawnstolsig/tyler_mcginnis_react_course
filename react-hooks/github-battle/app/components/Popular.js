@@ -83,27 +83,27 @@ ReposGrid.propTypes = {
 function reducer(state, action){
   if(action.type === 'fetch'){
     return {
-      ...state,
+        ...state,
       loading: true,
       error: null,
-      repos: null
     }
   } else if (action.type === 'success'){
+    state.repos[state.selectedLanguage] = action.data
+
     return {
-      ...state,
+        ...state,
       loading: false,
       error: null,
-      repos: action.data
     }
   } else if (action.type === 'error'){
     return {
-      ...state,
+        ...state,
       loading: false,
       error: 'Failed to retrieve data',
     }
   } else if (action.type === 'changeLanguage'){
     return {
-      ...state,
+        ...state,
       selectedLanguage: action.data
     }
   } else {
@@ -117,32 +117,38 @@ export default function Popular(){
     selectedLanguage: 'All',
     loading: false,
     error: null,
-    repos: null
+    repos: {}
   }
-  const [{selectedLanguage, loading, error, repos}, dispatch] = React.useReducer(reducer, initialState)
-
-  // useEffect for loading language.  call updateLanguage on initial render and whenever selectedLanguage changes
-  React.useEffect( () => {
-    updateLanguage(language)
-  }, [selectedLanguage])
+  const [state, dispatch] = React.useReducer(reducer, initialState)
+  const {selectedLanguage, loading, error, repos} = state
 
   // update this for reducer
   const updateLanguage = (selectedLanguage) => {
-    dispatch({type: 'fetch'})
+    // update selectedLanguage in state
+    dispatch({type: 'changeLanguage', data: selectedLanguage})
 
-    if (!repos[selectedLanguage]) {
-
+    // see if language is cached.  if not, then fetch from API
+    if(!repos[selectedLanguage]){
+      console.log(`${selectedLanguage} is not cached, fetching`)
+      dispatch({type: 'fetch'})
+  
       fetchPopularRepos(selectedLanguage)
-        .then((data) => {
-
-          repos[selectedLanguage] = data
-          dispatch({type: 'success', data: repos})
+        .then( (data) => {
+          dispatch({type: 'success', data: data}) 
         })
-        .catch(() => {
+        .catch( (err) => {
+          console.warn(err)
           dispatch({type: 'error'})
         })
-    }
+    } 
   }
+
+  // useEffect for loading language.  call updateLanguage on initial render and whenever selectedLanguage changes
+  React.useEffect( () => {
+    updateLanguage(selectedLanguage)
+  }, [selectedLanguage])
+
+
 
   return (
     <React.Fragment>
@@ -155,7 +161,7 @@ export default function Popular(){
 
       {error && <p className='center-text error'>{error}</p>}
 
-      {repos[selectedLanguage] && <ReposGrid repos={repos[selectedLanguage]} />}
+      {repos && repos[selectedLanguage] && <ReposGrid repos={repos[selectedLanguage]} />}
     </React.Fragment>
   )
 
