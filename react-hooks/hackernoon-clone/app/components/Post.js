@@ -53,9 +53,9 @@ export default function Post({location}) {
     loadingComments: true,
     error: null,
   })
+  const { id } = queryString.parse(location.search)
 
   React.useEffect( () => {
-    const { id } = queryString.parse(location.search)
 
     dispatch({type: 'fetchPost'})
 
@@ -72,7 +72,7 @@ export default function Post({location}) {
         dispatch({type: 'error', message})
       })
 
-  }, [location])
+  }, [id])
 
 
 
