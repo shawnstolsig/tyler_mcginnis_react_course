@@ -4,51 +4,58 @@ import { fetchMainPosts } from '../utils/api'
 import Loading from './Loading'
 import PostsList from './PostsList'
 
-export default class Posts extends React.Component {
-  state = {
+
+function postsReducer(state, action){
+  if(action.type==='fetch'){
+    return {
+      loading: true,
+      error: null,
+      posts: null
+    }
+  } else if (action.type==='error'){
+    return {
+      loading: false,
+      error: action.error,
+      posts: null
+    }
+  } else if (action.type==='success'){
+    return {
+      loading: false,
+      error: null,
+      posts: action.posts
+    }
+  } else {
+    throw new Error ('unsupported reducer action')
+  }
+}
+
+export default function Posts({type}){
+  const [state, dispatch] = React.useReducer(postsReducer,{
     posts: null,
     error: null,
     loading: true,
-  }
-  componentDidMount() {
-    this.handleFetch()
-  }
-  componentDidUpdate(prevProps) {
-    if (prevProps.type !== this.props.type) {
-      this.handleFetch()
-    }
-  }
-  handleFetch () {
-    this.setState({
-      posts: null,
-      error: null,
-      loading: true
-    })
+  })
 
-    fetchMainPosts(this.props.type)
-      .then((posts) => this.setState({
-        posts,
-        loading: false,
-        error: null
-      }))
-      .catch(({ message }) => this.setState({
-        error: message,
-        loading: false
-      }))
+  React.useEffect( () => {
+    dispatch({type: 'fetch'})
+
+    fetchMainPosts(type)
+      .then((posts) => dispatch({type: 'success', posts}))
+      .catch(({ message }) => dispatch( {type: 'error', message} ))
+
+  }, [type])
+
+  const { posts, error, loading } = state
+
+  if (loading === true) {
+    return <Loading />
   }
-  render() {
-    const { posts, error, loading } = this.state
 
-    if (loading === true) {
-      return <Loading />
-    }
-
-    if (error) {
-      return <p className='center-text error'>{error}</p>
-    }
-
-    return <PostsList posts={posts} />
+  if (error) {
+    return <p className='center-text error'>{error}</p>
   }
+
+  return <PostsList posts={posts} />
 }
 
 Posts.propTypes = {

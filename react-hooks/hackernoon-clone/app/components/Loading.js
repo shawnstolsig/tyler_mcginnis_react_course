@@ -25,7 +25,7 @@ export default function Loading({speed=300, text='Loading'}){
 
     return () => window.clearInterval(id)
 
-  }, [speed, ])
+  }, [speed, content, text])
 
   return (
     <p style={styles.content}>
