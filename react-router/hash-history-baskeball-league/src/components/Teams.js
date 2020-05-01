@@ -1,9 +1,12 @@
 import React from 'react'
 import { Route, Link } from 'react-router-dom'
 import Sidebar from './Sidebar'
+import TeamLogo from './TeamLogo'
+import Loading from './Loading'
 import { getTeamNames, getTeam } from '../api'
 import { parse } from 'query-string'
 import slug from 'slug'
+import Team from './Team'
 
 function teamReducer(state, action){
     if(action.type==='loading'){
@@ -54,42 +57,36 @@ export default function Teams(props){
                 ? <div className='sidebar-instruction'>Select a Team</div>
                 : null }
 
-            {/* <Route 
-                path={`${match.url}/:playerId`}
-                render={({match})=>{
-                    if(loading) return null
+            <Route 
+                path={`${match.url}/:teamId`}
+                render={({ match }) => 
 
-                    const { 
-                        name, position, teamId, number, avatar, apg, ppg, rpg, spg
-                    } = players.find((player) => slug(player.name) === match.params.playerId)
-                    
-                    return (
-                        <div className="panel">
-                            <img className='avatar' src={`${avatar}`} alt={`Avatar for ${name}`} />
-                            <h1 className='medium-header'>{name}</h1>
-                            <h3 className='header'>#{number}</h3>
-                            <div className="row">
-                                <ul className='info-list' style={{marginRight: 80}}>
-                                    <li>
-                                        Team 
-                                        <div>
-                                            <Link style={{color: '#68809a'}} to={`/${teamId}`}>{teamId[0].toUpperCase() + teamId.slice(1)}</Link>
-                                        </div>
-                                    </li>
-                                    <li>Position<div>{position}</div></li>
-                                    <li>PPG<div>{ppg}</div></li>
-                                </ul>
-                                <ul className="info-list">
-                                    <li>APG<div>{apg}</div></li>
-                                    <li>SPG<div>{spg}</div></li>
-                                    <li>RPG<div>{rpg}</div></li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div className="panel">
+                        {/* this is a render prop...convert to custom hook? */}
+                        <Team id={match.params.teamId}>
+                            {(team) => team === null
+                                ? <Loading />
+                                : <div style={{width: '100%'}}>
+                                    <TeamLogo id={team.id} className="center" />
+                                    <h1 className="medium-header">{team.name}</h1>
+                                    <ul className="info-list row">
+                                        <li>Established: <div>{team.established}</div></li>
+                                        <li>Manager: <div>{team.manager}</div></li>
+                                        <li>Coach: <div>{team.coach}</div></li>
+                                    </ul>
+                                    <Link
+                                        className="center btn-main"
+                                        to={`/${team.name}`}
+                                        >
+                                        {team.name} Team Page
+                                    </Link>
+                                  </div>
+                            }
+                        </Team>
+                    </div>
 
-                    )
-                }}
-            /> */}
+                }
+            />
         </div>
     )
 }
