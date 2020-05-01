@@ -20,7 +20,7 @@ export default function Team({id, children}){
     return children(team)
 
 }
-Team.proptyes = {
+Team.proptypes = {
     id: PropTypes.string.isRequired,
     children: PropTypes.func.isRequired
 }

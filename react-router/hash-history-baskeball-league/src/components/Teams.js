@@ -3,9 +3,8 @@ import { Route, Link } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import TeamLogo from './TeamLogo'
 import Loading from './Loading'
-import { getTeamNames, getTeam } from '../api'
+import { getTeamNames } from '../api'
 import { parse } from 'query-string'
-import slug from 'slug'
 import Team from './Team'
 
 function teamReducer(state, action){
@@ -76,7 +75,7 @@ export default function Teams(props){
                                     </ul>
                                     <Link
                                         className="center btn-main"
-                                        to={`/${team.name}`}
+                                        to={`/${match.params.teamId}`}
                                         >
                                         {team.name} Team Page
                                     </Link>
