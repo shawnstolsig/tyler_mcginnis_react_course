@@ -5,7 +5,6 @@ import {
   Switch
 } from 'react-router-dom'
 
-
 import Navbar from './Navbar'
 import Loading from './Loading'
 
