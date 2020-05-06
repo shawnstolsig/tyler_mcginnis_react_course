@@ -3,6 +3,9 @@
 <head>
   <title>Todos/Goals</title>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js'></script>
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src='https://unpkg.com/babel-standalone@6.15.0/babel.min.js'></script>
 </head>
 <body>
   <div>
@@ -16,6 +19,12 @@
     <input id='goal' type='text' placeholder='Add Goal' />
     <button id='goalBtn'>Add Goal</button>
     <ul id='goals'></ul>
+  </div>
+
+  <hr />
+
+  <div id="app">
+    <!-- react   -->
   </div>
 
   <script type='text/javascript'>
@@ -131,6 +140,8 @@
 
       goals.forEach(addGoalToDOM)
       todos.forEach(addTodoToDOM)
+
+      
     })
 
     // DOM code
@@ -205,6 +216,108 @@
 
     document.getElementById('goalBtn')
       .addEventListener('click', addGoal)
+  </script>
+
+
+
+  <script type="text/babel">
+
+    // components
+    function List({store, items, removeFunc, toggleFunc}){
+      return (
+        <ul>
+          {items.map((item) => (
+            <li 
+              key={item.id}
+              style={{textDecoration: item.complete ? 'line-through' : 'none'}}
+              onClick={toggleFunc ? () => store.dispatch(toggleFunc(item.id)) : null }
+              >{item.name}
+              <button 
+                onClick={() => store.dispatch(removeFunc(item.id))}
+                >X
+              </button>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    function Todos({store}){
+      const [inputValue, setInputValue] = React.useState('')
+
+      const handleChange = (e) => setInputValue(e.target.value)
+      const addReactTodo = () => {
+
+        store.dispatch( addTodoAction({
+          id: generateId(),
+          name: inputValue,
+          complete: false,
+        }))
+      
+        setInputValue('')
+      }
+
+      return (
+        <div>
+          <h1>Todos</h1>
+          <input type="text" placeholder="Add todo" onChange={handleChange}  value={inputValue} />
+          <button onClick={addReactTodo}>Add todo</button>
+          <List 
+            items={store.getState().todos} 
+            removeFunc={removeTodoAction}
+            toggleFunc={toggleTodoAction}
+            store={store}/>
+        </div>
+      )
+    }
+
+    function Goals({store}){
+      const [inputValue, setInputValue] = React.useState('')
+
+      const handleChange = (e) => setInputValue(e.target.value)
+      const addReactGoal = () => {
+
+        store.dispatch( addGoalAction({
+          id: generateId(),
+          name: inputValue,
+        }))
+      
+        setInputValue('')
+      }
+
+      return (
+        <div>
+          <h1>Goals</h1>
+          <input type="text" placeholder="Add goal" onChange={handleChange}  value={inputValue} />
+          <button onClick={addReactGoal}>Add goal</button>
+          <List 
+            items={store.getState().goals} 
+            removeFunc={removeGoalAction}
+            toggleFunc={false}
+            store={store}/>
+        </div>
+      )
+    }
+
+    // main app
+    function App({store}){
+      // to force re-render each time store is updated
+      const [f,forcer] = React.useState(0)
+      store.subscribe(() => forcer((f) => f + 1))
+      return (
+        <div>
+          <Todos store={store}/>
+          <Goals store={store}/>
+        </div>
+      )
+    }
+
+    // link DOM to react
+    ReactDOM.render(
+        <App store={store}/>,
+        document.getElementById('app')
+    )
+
   </script>
 </body>
 </html>
