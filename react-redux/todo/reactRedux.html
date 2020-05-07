@@ -219,8 +219,10 @@
     }
 
     // START OF REACT CODE
+ 
     // components
-    function List({store, items, removeFunc, toggleFunc}){
+    function List({items, removeFunc, toggleFunc}){
+      const store = React.useContext(StoreContext)
       return (
         <ul>
           {items.map((item) => (
@@ -239,7 +241,8 @@
       )
     }
 
-    function Todos({store}){
+    function Todos(){
+      const store = React.useContext(StoreContext)
       const [inputValue, setInputValue] = React.useState('')
 
       const handleChange = (e) => setInputValue(e.target.value)
@@ -256,7 +259,7 @@
             items={store.getState().todos} 
             removeFunc={deleteTodo}
             toggleFunc={toggleTodo}
-            store={store}/>
+            />
         </div>
       )
     }
@@ -269,7 +272,8 @@
     function toggleTodo(item){
       store.dispatch(handleToggleTodo(item.id))
     }
-    function Goals({store}){
+    function Goals(){
+      const store = React.useContext(StoreContext)
       const [inputValue, setInputValue] = React.useState('')
 
       const handleChange = (e) => setInputValue(e.target.value)
@@ -295,7 +299,8 @@
       store.dispatch(handleDeleteGoal(item))
     }
     // main app
-    function App({store}){
+    function App(){
+      const store = React.useContext(StoreContext)
 
       // load initial data on first render
       React.useEffect(() => {
@@ -312,12 +317,15 @@
       }
       return (
         <div>
-          <Todos store={store}/>
-          <Goals store={store}/>
+            <Todos/>
+            <Goals/>
         </div>
       )
     }
 
+    // context for the store
+    const StoreContext = React.createContext()
+    const StoreProvider = StoreContext.Provider
 
     // Instantiate Redux
     const store = Redux.createStore(Redux.combineReducers({
@@ -328,7 +336,9 @@
 
     // link DOM to react
     ReactDOM.render(
-        <App store={store}/>,
+        <StoreProvider value={store}>
+          <App />
+        </StoreProvider>,
         document.getElementById('app')
     )
 
