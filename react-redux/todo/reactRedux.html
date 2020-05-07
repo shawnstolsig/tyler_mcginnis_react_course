@@ -6,6 +6,8 @@
   <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
   <script src='https://unpkg.com/babel-standalone@6.15.0/babel.min.js'></script>
+  <script src='https://tylermcginnis.com/goals-todos-api/index.js'></script>
+  <script src='https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js'></script>
 </head>
 <body>
 
@@ -20,11 +22,22 @@
     }
 
     // App Code
+    const RECEIVE_DATA = "RECEIVE_DATA"
     const ADD_TODO = 'ADD_TODO'
     const REMOVE_TODO = 'REMOVE_TODO'
     const TOGGLE_TODO = 'TOGGLE_TODO'
     const ADD_GOAL = 'ADD_GOAL'
     const REMOVE_GOAL = 'REMOVE_GOAL'
+
+
+
+    function receiveDataAction(todos, goals){
+      return {
+        type: RECEIVE_DATA,
+        todos,
+        goals
+      }
+    }
 
     function addTodoAction (todo) {
       return {
@@ -61,6 +74,73 @@
       }
     }
 
+    // "ACTION CREATORS" that handle the backend logic...and also still use our original action creators
+    // instead of returning an action object, it returns a function that takes in dispatch and does all store/db updates
+    function handleDeleteTodo(todo){
+      return (dispatch) => {
+        dispatch(removeTodoAction(todo.id))
+        return API.deleteTodo(todo.id)
+          .catch(() => {
+            alert("Failed to delete Todo")
+            dispatch(addTodoAction(todo))
+          })
+        }
+    }
+    function handleDeleteGoal(goal){
+      return (dispatch) => {
+        dispatch(removeGoalAction(goal.id))
+        return API.deleteGoal(goal.id)
+          .catch(() => {
+            alert("Failed to delete Goal")
+            dispatch(addGoalAction(goal))
+          })
+      }
+    }
+    function handleTodoAdd(inputValue, setInputValue){
+      return (dispatch) => {
+
+        return API.saveTodo(inputValue)
+        .then((todo) => {
+          dispatch(addTodoAction(todo))
+          setInputValue('')
+        })
+        .catch(() => alert("Failed to save todo, please try again."))
+      }
+    }
+    function handleGoalAdd(inputValue, setInputValue){
+      return (dispatch) => {
+
+        return API.saveGoal(inputValue)
+        .then((goal) => {
+          dispatch(addGoalAction(goal))
+          setInputValue('')
+        })
+        .catch(() => alert("Failed to save goal, please try again."))
+      }
+    }
+    function handleToggleTodo(id){
+      return (dispatch) => {
+        dispatch(toggleTodoAction(id))
+        return API.saveTodoToggle(id)
+              .catch(() => {
+                alert("Failed to toggle todo.")
+                dispatch(toggleTodoAction(id))
+              })
+        }
+    }
+    function handleReceiveData(){
+      return (dispatch) => {
+        return Promise.all([
+                API.fetchTodos(),
+                API.fetchGoals()
+              ]).then(([todos, goals])=> {
+
+                dispatch(receiveDataAction(todos, goals))
+
+              })
+      }
+    }
+
     // middleware
     const checker = (store) => (next) => (action) => {
       if(action.type === ADD_TODO && 
@@ -78,7 +158,7 @@
 
     // log action to console and new state of store
     const logger = (store) => (next) => (action) => {
-      console.group(action.type)
+      console.group(action.type ? action.type : "Thunk")
       console.log(`The action: ${action.type}`)
       const result = next(action)
       console.log(`The new state:`, store.getState())
@@ -86,6 +166,14 @@
 
       return result
     }
+
+    // middleware to tell Redux to invoke the action if the action is a function
+    // const thunk = (store) => (next) => (action) => {
+    //   if(typeof action === 'function'){
+    //     return action(store.dispatch)
+    //   }
+    //   return next(action)
+    // }
 
     // Todo reducer function
     function todos (state = [], action) {
@@ -98,6 +186,8 @@
           return state.map((todo) => todo.id !== action.id ? todo :
             Object.assign({}, todo, {complete: !todo.complete})
           )
+        case RECEIVE_DATA: 
+          return action.todos
         default :
           return state
       }
@@ -110,17 +200,23 @@
           return state.concat([action.goal])
         case REMOVE_GOAL :
           return state.filter((goal) => goal.id !== action.id)
+        case RECEIVE_DATA: 
+          return action.goals
         default :
           return state
       }
     }
 
-    // Instantiate Redux
-    const store = Redux.createStore(Redux.combineReducers({
-      todos,
-      goals,
-    }),Redux.applyMiddleware(checker, logger))
-
+    // Loading reducer
+    function loading(state = true, action){
+      switch(action.type){
+        case RECEIVE_DATA:
+          return false
+        
+        default: 
+          return state
+      }
+    }
 
     // START OF REACT CODE
     // components
@@ -131,10 +227,10 @@
             <li 
               key={item.id}
               style={{textDecoration: item.complete ? 'line-through' : 'none'}}
-              onClick={toggleFunc ? () => store.dispatch(toggleFunc(item.id)) : null }
-              >{item.name}
+              >
+                <span  onClick={toggleFunc ? () => toggleFunc(item) : null }>{item.name}</span>
               <button 
-                onClick={() => store.dispatch(removeFunc(item.id))}
+                onClick={() => removeFunc(item)}
                 >X
               </button>
             </li>
@@ -148,14 +244,7 @@
 
       const handleChange = (e) => setInputValue(e.target.value)
       const addReactTodo = () => {
-
-        store.dispatch( addTodoAction({
-          id: generateId(),
-          name: inputValue,
-          complete: false,
-        }))
-      
-        setInputValue('')
+        store.dispatch(handleTodoAdd(inputValue, setInputValue))
       }
 
       return (
@@ -165,25 +254,27 @@
           <button onClick={addReactTodo}>Add todo</button>
           <List 
             items={store.getState().todos} 
-            removeFunc={removeTodoAction}
-            toggleFunc={toggleTodoAction}
+            removeFunc={deleteTodo}
+            toggleFunc={toggleTodo}
             store={store}/>
         </div>
       )
     }
 
+    function deleteTodo(item){
+      // optimistic delete: remove from store, remove from API, but add back to store if API fails to delete
+      store.dispatch(handleDeleteTodo(item))
+    }
+
+    function toggleTodo(item){
+      store.dispatch(handleToggleTodo(item.id))
+    }
     function Goals({store}){
       const [inputValue, setInputValue] = React.useState('')
 
       const handleChange = (e) => setInputValue(e.target.value)
       const addReactGoal = () => {
-
-        store.dispatch( addGoalAction({
-          id: generateId(),
-          name: inputValue,
-        }))
-      
-        setInputValue('')
+        store.dispatch(handleGoalAdd(inputValue, setInputValue))
       }
 
       return (
@@ -193,18 +284,32 @@
           <button onClick={addReactGoal}>Add goal</button>
           <List 
             items={store.getState().goals} 
-            removeFunc={removeGoalAction}
+            removeFunc={deleteGoal}
             toggleFunc={false}
             store={store}/>
         </div>
       )
     }
-
+    function deleteGoal(item){
+      // optimistic delete: remove from store, remove from API, but add back to store if API fails to delete
+      store.dispatch(handleDeleteGoal(item))
+    }
     // main app
     function App({store}){
+
+      // load initial data on first render
+      React.useEffect(() => {
+          store.dispatch(handleReceiveData())
+      },[])
+
       // to force re-render each time store is updated
       const [f,forcer] = React.useState(0)
       store.subscribe(() => forcer((f) => f + 1))
+
+      const {loading} = store.getState()
+      if(loading){
+        return <div>LOADING</div>
+      }
       return (
         <div>
           <Todos store={store}/>
@@ -212,6 +317,14 @@
         </div>
       )
     }
+
+
+    // Instantiate Redux
+    const store = Redux.createStore(Redux.combineReducers({
+      todos,
+      goals,
+      loading,
+    }),Redux.applyMiddleware(ReduxThunk.default, checker, logger))
 
     // link DOM to react
     ReactDOM.render(
