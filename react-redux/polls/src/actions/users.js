@@ -17,7 +17,7 @@ export const REMOVE_ANSWER = 'REMOVE_ANSWER'
 //     polls: ['8xf0y6ziyjabvozdd253nd', 'am8ehyc8byjqgar0jgpub9']
 //   }
 
-function receiveUsers(users){
+export function receiveUsers(users){
     return {
         type: RECEIVE_USERS,
         users

@@ -4,7 +4,7 @@ export const RECEIVE_POLLS = 'RECEIVE_POLLS'
 export const ADD_POLL = 'ADD_POLL'
 export const REMOVE_POLL = 'REMOVE_POLL'
 
-function receivePolls(polls){
+export function receivePolls(polls){
     return {
         type: RECEIVE_POLLS,
         polls
