@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-function Dashboard({dispatch, answered, unanswered}){
+function Dashboard({dispatch, answered, unanswered, match}){
 
     const [ questionType, setQuestionType ] = React.useState('unanswered')
     const list = questionType === 'answered' 
@@ -24,7 +25,9 @@ function Dashboard({dispatch, answered, unanswered}){
             </div>
             <ul className="dashboard-list">
                 {list.map((poll)=>(
-                    <li key={poll.id}>{poll.question}</li>
+                    <li key={poll.id}>
+                        <Link to={`polls/${poll.id}`}>{poll.question}</Link>
+                    </li>
                 ))}
             </ul>
         </div>

@@ -1,4 +1,5 @@
-import { RECEIVE_USERS, ADD_ANSWER, REMOVE_ANSWER } from '../actions/users'
+import { RECEIVE_USERS } from '../actions/users'
+import { ADD_ANSWER } from '../actions/answers'
 import { ADD_POLL } from '../actions/polls'
 
 export default function userReducer(state = {}, action){
@@ -9,12 +10,13 @@ export default function userReducer(state = {}, action){
                 ...action.users
             }
         case ADD_ANSWER:
+            const user = state[action.authedUser]
             return {
-                ...state
-            }
-        case REMOVE_ANSWER:
-            return {
-                ...state
+                ...state,
+                [action.authedUser]: {
+                    ...user,
+                    answers: user.answers.concat([action.id])
+                }
             }
         case ADD_POLL:
             const poll = action.poll

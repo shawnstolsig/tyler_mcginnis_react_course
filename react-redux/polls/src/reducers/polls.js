@@ -1,4 +1,5 @@
-import { RECEIVE_POLLS, ADD_POLL, REMOVE_POLL } from '../actions/polls'
+import { RECEIVE_POLLS, ADD_POLL } from '../actions/polls'
+import { ADD_ANSWER } from '../actions/answers'
 
 export default function pollsReducer(state = {}, action){
     switch(action.type){
@@ -7,14 +8,21 @@ export default function pollsReducer(state = {}, action){
                 ...state,   
                 ...action.polls
             }
+        case ADD_ANSWER: 
+            const { answer, id, authedUser } = action
+            const poll = state[id]
+            const votesKey = answer + "Votes"
+            return {
+                ...state, 
+                [action.id]: {
+                    ...poll,
+                    [votesKey]: poll[votesKey].concat([authedUser])
+                }
+            }
         case ADD_POLL:
             return {
                 ...state,                        // spreads old polls
                 [action.poll.id]: action.poll    // adds new poll
-            }
-        case REMOVE_POLL: 
-            return {
-                ...state
             }
         default:
             return state

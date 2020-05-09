@@ -1,19 +1,20 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-const styles = {
-    active: {
-        fontWeight: 'bold',
-        color: 'red'
-    }
-}
-
 export default function Navbar(){
     return (
-        <div>
-            <NavLink exact to="/" activeStyle={styles.active}>Dashboard</NavLink>
-            <NavLink to="/leaderboard" activeStyle={styles.active}>Leaderboard</NavLink>
-            <NavLink to="/add" activeStyle={styles.active}>Add Poll</NavLink> 
-        </div>
+        <nav className="nav">
+            <ul>
+                <li>
+                    <NavLink exact to="/" activeClassName='active'>Dashboard</NavLink>
+                </li>
+                <li>
+                    <NavLink to="/leaderboard" activeClassName='active'>Leaderboard</NavLink>
+                </li>
+                <li>
+                    <NavLink to="/add" activeClassName='active'>Add Poll</NavLink> 
+                </li>
+            </ul>
+        </nav>
     )
 }

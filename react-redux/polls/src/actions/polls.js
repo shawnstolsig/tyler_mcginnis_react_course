@@ -2,7 +2,6 @@ import { savePoll } from '../utils/api'
 import { showLoading, hideLoading } from 'react-redux-loading'
 export const RECEIVE_POLLS = 'RECEIVE_POLLS'
 export const ADD_POLL = 'ADD_POLL'
-export const REMOVE_POLL = 'REMOVE_POLL'
 
 export function receivePolls(polls){
     return {
@@ -13,12 +12,6 @@ export function receivePolls(polls){
 function addPoll(poll){
     return {
         type: ADD_POLL,
-        poll
-    }
-}
-function removePoll(poll){
-    return {
-        type: REMOVE_POLL,
         poll
     }
 }
@@ -33,6 +26,5 @@ export function handleAddPoll(poll){
         return savePoll({...poll, author: authedUser})
             .then((poll) => dispatch(addPoll(poll)))
             .then(()=>dispatch(hideLoading()))
-            .catch(() => dispatch(removePoll(poll)))
     }
 }
