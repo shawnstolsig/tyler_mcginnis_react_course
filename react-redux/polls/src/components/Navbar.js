@@ -11,7 +11,7 @@ const styles = {
 export default function Navbar(){
     return (
         <div>
-            <NavLink to="/" activeStyle={styles.active}>Dashboard</NavLink>
+            <NavLink exact to="/" activeStyle={styles.active}>Dashboard</NavLink>
             <NavLink to="/leaderboard" activeStyle={styles.active}>Leaderboard</NavLink>
             <NavLink to="/add" activeStyle={styles.active}>Add Poll</NavLink> 
         </div>

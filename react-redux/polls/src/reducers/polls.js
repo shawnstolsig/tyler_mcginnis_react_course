@@ -9,7 +9,8 @@ export default function pollsReducer(state = {}, action){
             }
         case ADD_POLL:
             return {
-                ...state
+                ...state,                        // spreads old polls
+                [action.poll.id]: action.poll    // adds new poll
             }
         case REMOVE_POLL: 
             return {

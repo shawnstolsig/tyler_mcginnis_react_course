@@ -2,9 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { handleInitialData } from '../actions/shared'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import LoadingBar from 'react-redux-loading'
 
 import Navbar from './Navbar'
 import Dashboard from './Dashboard'
+import Leaderboard from './Leaderboard';
+import Add from './Add';
 
 function App({dispatch,loading}) {
 
@@ -12,18 +15,19 @@ function App({dispatch,loading}) {
     dispatch(handleInitialData())
   }, [dispatch])
 
-  if (loading) {
-    return <div>LOADING</div>
-  }
-  
   return (
     <Router>
+      <LoadingBar />
       <Navbar />
 
-      <Switch>
-        <Route exact path='/' component={Dashboard} />
-        <Route render={() => <div>404</div>} />
-      </Switch>
+      { loading ? null : 
+        <Switch>
+          <Route exact path='/' component={Dashboard} />
+          <Route path="/leaderboard" component={Leaderboard} />
+          <Route path="/add" component={Add} />
+          <Route render={() => <div>404</div>} />
+        </Switch>
+      }
 
     </Router>
   );
