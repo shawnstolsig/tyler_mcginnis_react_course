@@ -1,0 +1,29 @@
+ul {
+  padding-left: 0;
+}
+
+li {
+  list-style-type: none;
+  padding: 10px;
+  text-decoration: none;
+}
+
+a {
+  text-decoration: none;
+  color: #252525;
+}
+
+.navbar ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  text-decoration: none;
+}
+
+.navbar li:first-child {
+  padding-left: 0;
+}
+
+.tweet-container {
+  border: 1px solid black;
+}
