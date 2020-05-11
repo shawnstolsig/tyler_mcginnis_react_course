@@ -56,7 +56,7 @@ function Tweet({dispatch, authedUser, tweet}){
                     </button>
                     <button className="btn-clear" onClick={toggleLike}>
                         {hasLiked 
-                            ? <MdFavorite /> 
+                            ? <MdFavorite color="red"/> 
                             : <MdFavoriteBorder />} {likes}
                     </button>
                 </div>

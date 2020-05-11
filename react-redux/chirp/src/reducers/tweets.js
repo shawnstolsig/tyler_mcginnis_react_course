@@ -10,12 +10,30 @@ export default function tweetReducer(state = {}, action){
                 ...action.tweets
             }
         case ADD_TWEET: 
+
+            // return different object if adding reply
+            if(action.tweet.replyingTo){
+                const newReplies = state[action.tweet.replyingTo].replies.concat([action.tweet.id])
+
+                return {
+                    ...state,
+                    [action.tweet.id]: {
+                        ...action.tweet
+                    },
+                    [action.tweet.replyingTo]: {
+                        ...state[action.tweet.replyingTo],
+                        replies: newReplies
+                    }
+                }
+            }
+
             return {
                 ...state,
                 [action.tweet.id]: {
                     ...action.tweet
                 }
             }
+
         case TOGGLE_LIKE: 
             // get the existing likes array for the tweet
             let newLikesArray = state[action.id].likes

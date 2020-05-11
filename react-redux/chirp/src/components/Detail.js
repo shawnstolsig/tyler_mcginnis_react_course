@@ -11,7 +11,7 @@ function Detail({tweet, match}){
         <div>
             <Tweet tweet={tweet} />
             <NewTweet replyingTo={tweet.id} toHome={false}/>
-            <Replies parentID={tweet.id} />
+            {tweet.replies>0 && <Replies parentID={tweet.id} />}
         </div>
     )
 
