@@ -32,14 +32,17 @@ function App({dispatch}) {
 	return (
 		<Router>
 			<LoadingBar />
-			<Navbar />
+			<div className="container">
+				<Navbar />
 
-			<Switch>
-				<Route exact path='/' component={Timeline} />
-				<Route path="/new" component={(props) => <NewTweet {...props} toHome={true}/>} />
-				<Route path='/tweet/:id' component={Detail} />
-				<Route render={() => <h1>404: Page not found</h1>} />
-			</Switch>
+				<Switch>
+					<Route exact path='/' component={Timeline} />
+					<Route path="/new" component={(props) => <NewTweet {...props} toHome={true}/>} />
+					<Route path='/tweet/:id' component={Detail} />
+					<Route render={() => <h1>404: Page not found</h1>} />
+				</Switch>
+
+			</div>
 
 		</Router>
 	);

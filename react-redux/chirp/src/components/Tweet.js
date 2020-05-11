@@ -20,10 +20,11 @@ function Tweet({dispatch, authedUser, tweet}){
         parent 
     } = tweet
 
-    const handleReply = () => {
-        console.log("Implement reply button")
+    const handleReply = (e) => {
+        console.log("Redirecting to detail page...")
     }
-    const toggleLike = () => {
+    const toggleLike = (e) => {
+        e.preventDefault()
         dispatch(handleToggleLike({
             id, 
             hasLiked: !hasLiked, 
@@ -32,27 +33,33 @@ function Tweet({dispatch, authedUser, tweet}){
     }
 
     return (
-        <Link to={`tweet/${id}`}>
+        <Link to={`/tweet/${id}`}>
             <div className="tweet-container">
-                <span>
-                    <img src={avatar} alt={`Avatar for ${name}`} />
-                </span>
-                <span>
-                    <h3>{name}</h3>
-                    <h6>{formatDate(timestamp)}</h6>
+                <div>
+                    <img 
+                        src={avatar} 
+                        alt={`Avatar for ${name}`} 
+                        className="avatar"
+                        />
+                </div>
+                <div className="tweet-contents">
+                    <h1 className="heading-large">{name}</h1>
+                    <h2 className="heading-medium">{formatDate(timestamp)}</h2>
                     {parent 
-                        ? <h5>Replying to @{parent.author}</h5>
+                        ?   <Link to={`/tweet/${parent.id}`}>
+                                <h3 className="heading-small">Replying to @{parent.author}</h3>
+                            </Link>
                         : '' }
                     <p>{text}</p>
-                    <button className="btn" onClick={handleReply}>
+                    <button className="btn-clear" onClick={handleReply}>
                         <MdReply />{replies}
                     </button>
-                    <button className="btn" onClick={toggleLike}>
+                    <button className="btn-clear" onClick={toggleLike}>
                         {hasLiked 
                             ? <MdFavorite /> 
                             : <MdFavoriteBorder />} {likes}
                     </button>
-                </span>
+                </div>
             </div>
         </Link>
     )

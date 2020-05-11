@@ -6,7 +6,7 @@ import { formatTweet } from '../utils/helpers'
 function Timeline({dispatch, users, tweets}){
     return (
         <div>
-            <h3>Timeline</h3>
+            <h1 className="title center">Timeline</h1>
             <ul>
                 {tweets.map((tweet) => (
                     <li key={tweet.id}>

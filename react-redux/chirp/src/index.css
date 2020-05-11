@@ -13,6 +13,11 @@ a {
   color: #252525;
 }
 
+.container { 
+  max-width: 60vw;
+  margin: 10px auto;
+}
+
 .navbar ul {
   display: flex;
   flex-direction: row;
@@ -25,5 +30,70 @@ a {
 }
 
 .tweet-container {
-  border: 1px solid black;
+  border: 1px solid rgb(180, 180, 180);
+  display: flex;
+  border-radius: 3px;
+}
+
+.tweet-contents {
+  margin: 10px;
+}
+
+.tweet-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.tweet-form textarea {
+  min-height: 100px;
+  font-family: 'Courier New', Courier, monospace;
+  border-radius: 3px;
+}
+.tweet-form button {
+  width: 200px;
+  height: 50px;
+  margin: 10px auto;
+  background-color: rgba(0,0,0,0);
+  border: 1px solid gray;
+  border-radius: 3px;
+}
+
+.avatar {
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 100%;
+  margin: 10px;
+}
+
+.title {
+  font-size: x-large;
+  margin-bottom: 12px;
+}
+.heading-large {
+  font-size: large;  
+  margin: 3px;
+}
+
+.heading-medium {
+  font-size: medium;
+  margin: 3px;
+  color: rgb(180, 180, 180);
+}
+
+.heading-small {
+  font-size: small;
+  margin: 3px;
+  color: rgb(180, 180, 180);
+}
+
+.btn-clear {
+  background-color: rgba(0,0,0,0);
+  border: none;
+  font-size: large;
+}
+.btn-clear:hover {
+  color: blue;
+}
+.center {
+  text-align: center;
 }

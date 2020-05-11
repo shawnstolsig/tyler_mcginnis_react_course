@@ -2,8 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { handleAddTweet } from '../actions/tweets'
 
-function NewTweet({dispatch, authedUser, replyingTo, history, toHome}){
+function NewTweet({ dispatch, authedUser, replyingTo, history, toHome }) {
     const [text, setText] = React.useState('')
+    
     const handleSubmit = () => {
         dispatch(handleAddTweet({
             text,
@@ -11,29 +12,31 @@ function NewTweet({dispatch, authedUser, replyingTo, history, toHome}){
             replyingTo
         }))
         setText('')
-        if(toHome){
+        if (toHome) {
             history.push('/')
         }
     }
 
     return (
         <div>
-            <h3>Compose new tweet</h3>
-            <textarea 
-                placeholder="What's happening?" 
-                value={text} 
-                onChange={(e) => setText(e.target.value)}
-            />
-            <button 
-                onClick={handleSubmit}
-                disabled={!text}
+            <h1 className="title center">Compose new tweet</h1>
+            <div className="tweet-form">
+                <textarea
+                    placeholder="What's happening?"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                />
+                <button
+                    onClick={handleSubmit}
+                    disabled={!text}
                 >Submit
-            </button>
+                </button>
+            </div>
         </div>
     )
 }
 
-function mapStateToProps({authedUser}){
+function mapStateToProps({ authedUser }) {
     return {
         authedUser,
     }
