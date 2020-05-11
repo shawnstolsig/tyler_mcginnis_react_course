@@ -1,37 +1,67 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { formatDate } from '../utils/helpers'
+import { handleToggleLike } from '../actions/tweets'
+import { Link } from 'react-router-dom'
 
-import { MdReply, MdFavorite } from 'react-icons/md'
+import { MdReply, MdFavorite, MdFavoriteBorder } from 'react-icons/md'
 
-function Tweet({dispatch, tweet, avatarURL}){
+function Tweet({dispatch, authedUser, tweet}){
 
-    const { id, text, author, timestamp, likes, replies, replyingTo } = tweet
+    const { 
+        name, 
+        id, 
+        timestamp, 
+        text, 
+        avatar, 
+        likes, 
+        replies, 
+        hasLiked, 
+        parent 
+    } = tweet
+
     const handleReply = () => {
         console.log("Implement reply button")
     }
-    const handleFavorite = () => {
-        console.log("Implement favorite button")
+    const toggleLike = () => {
+        dispatch(handleToggleLike({
+            id, 
+            hasLiked: !hasLiked, 
+            authedUser
+        }))
     }
 
     return (
-        <div className="tweet-container">
-            <span>
-                <img src={avatarURL} alt={`Avatar for ${author}`} />
-            </span>
-            <span>
-                <h3>{author}</h3>
-                <h6>{timestamp}</h6>
-                {replyingTo 
-                    ? <h5>Replying to {replyingTo}</h5>
-                    : '' }
-                <p>{text}</p>
-                <button className="btn" onClick={handleReply}><MdReply />{replies.length}</button>
-                <button className="btn" onClick={handleFavorite}><MdFavorite />{likes.length}</button>
-            </span>
-        </div>
+        <Link to={`tweet/${id}`}>
+            <div className="tweet-container">
+                <span>
+                    <img src={avatar} alt={`Avatar for ${name}`} />
+                </span>
+                <span>
+                    <h3>{name}</h3>
+                    <h6>{formatDate(timestamp)}</h6>
+                    {parent 
+                        ? <h5>Replying to @{parent.author}</h5>
+                        : '' }
+                    <p>{text}</p>
+                    <button className="btn" onClick={handleReply}>
+                        <MdReply />{replies}
+                    </button>
+                    <button className="btn" onClick={toggleLike}>
+                        {hasLiked 
+                            ? <MdFavorite /> 
+                            : <MdFavoriteBorder />} {likes}
+                    </button>
+                </span>
+            </div>
+        </Link>
     )
 
 }
 
-
-export default connect()(Tweet)
+function mapStateToProps({authedUser}){
+    return {
+        authedUser
+    }
+}
+export default connect(mapStateToProps)(Tweet)

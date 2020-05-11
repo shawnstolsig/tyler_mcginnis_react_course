@@ -1,4 +1,4 @@
-import { NEW_TWEET } from '../actions/tweets'
+import { ADD_TWEET, TOGGLE_LIKE } from '../actions/tweets'
 import { RECEIVE_DATA } from '../actions/shared'
 
 
@@ -8,6 +8,32 @@ export default function tweetReducer(state = {}, action){
             return {
                 ...state,
                 ...action.tweets
+            }
+        case ADD_TWEET: 
+            return {
+                ...state,
+                [action.tweet.id]: {
+                    ...action.tweet
+                }
+            }
+        case TOGGLE_LIKE: 
+            // get the existing likes array for the tweet
+            let newLikesArray = state[action.id].likes
+            
+            // if toggle is adding like
+            if(action.hasLiked){
+                newLikesArray = newLikesArray.concat([action.authedUser])
+            }
+            else {
+                newLikesArray = newLikesArray.filter((user) => user !== action.authedUser)
+            }
+
+            return {
+                ...state,
+                [action.id]: {
+                    ...state[action.id],
+                    likes: newLikesArray
+                }
             }
         default:
             return state
