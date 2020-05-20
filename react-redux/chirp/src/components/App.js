@@ -19,7 +19,7 @@ import NewTweet from './NewTweet';
 function App({dispatch}) {
 
 	// hard-coding authed user
-	const AUTHED_USER = 'tylermcginnis'
+	const AUTHED_USER = 'shawnstolsig'
 
 	// when component mounts, get initial data
 	React.useEffect(() => {
